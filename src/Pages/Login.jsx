@@ -48,7 +48,10 @@ const Login = () => {
       </button>
 
       <p className="mt-3 text-center">
-        New user? <Link to="/register" className="text-blue-500">Register</Link>
+        New user?{" "}
+        <Link to="/register" className="text-blue-500">
+          Register
+        </Link>
       </p>
     </div>
   );
