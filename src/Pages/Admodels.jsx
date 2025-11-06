@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../Context/Authcontext";
+import Swal from "sweetalert2";
 
 const AddModels = () => {
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -10,28 +13,41 @@ const AddModels = () => {
       category: e.target.category.value,
       description: e.target.description.value,
       thumbnail: e.target.thumbnail.value,
-      created_a: new Date(),
+      created_at: new Date(), // updated key
       downloads: 0,
-      created_by : "email@example.com"
-
+      created_by: user.email,
     };
 
-
-    fetch('http://localhost:3000/moduls',{
-       method: 'POST',
-       headers : {
+    fetch("http://localhost:3000/moduls", {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.accessToken}`, // token include
       },
-      body: JSON.stringify(formData) 
-    }).then(res => res.json())
-    .then(data => {
-      console.log(data);
-    }).catch(err => {
-      console.log(err);
+      body: JSON.stringify(formData),
     })
-
-
-
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Model added successfully!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          e.target.reset(); // form clear
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
+      });
   };
 
   return (
@@ -41,7 +57,7 @@ const AddModels = () => {
       </h2>
 
       <form
-        onSubmit={handleSubmit}  // ✅ onSubmit attach করা হলো
+        onSubmit={handleSubmit}
         className="bg-base-100 shadow-lg p-8 rounded-2xl space-y-6"
       >
         {/* Model Name */}
@@ -58,15 +74,13 @@ const AddModels = () => {
           />
         </div>
 
-        {/* Category Dropdown */}
+        {/* Category */}
         <div>
           <label className="label">
             <span className="label-text font-medium">Category</span>
           </label>
           <select name="category" className="select select-bordered w-full" required>
-            <option value="" disabled>
-              -- Select Category --
-            </option>
+            <option value="" disabled>-- Select Category --</option>
             <option value="vehicles">Vehicles</option>
             <option value="plants">Plants</option>
             <option value="foods">Foods</option>

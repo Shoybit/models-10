@@ -39,8 +39,6 @@ export const router = createBrowserRouter([
             <ModelDetails />
           </PrivateRoute>
         ),
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/moduls/${params.id}`),
       },
       {
         path: "UpdateModals/:id",

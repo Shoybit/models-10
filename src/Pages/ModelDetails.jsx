@@ -1,10 +1,32 @@
-import React from "react";
-import { Link, useLoaderData, useNavigate } from "react-router";
+import React, {useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
+import { AuthContext } from "../Context/Authcontext";
 
 const ModelDetails = () => {
-  const model = useLoaderData();
-  const navigate = useNavigate(); 
+  const { id } = useParams(); 
+  const [model, setModel] = useState({});
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext)
+  useEffect(() => {
+    fetch(`http://localhost:3000/moduls/${id}`, {
+headers: {
+  authorization: `Bearer ${user.accessToken}`
+},
+
+    })
+      .then((res) => res.json()) 
+      .then((data) => {
+        console.log("Fetched data:", data);
+        setModel(data); 
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching model:", err);
+        setLoading(false);
+      });
+  }, [id]);
 
   const handleDelete = () => {
     Swal.fire({
@@ -14,30 +36,32 @@ const ModelDetails = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
         fetch(`http://localhost:3000/moduls/${model._id}`, {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         })
-          .then(res => res.json())
-          .then(data => {
-            if (data.deletedCount > 0 || data.success) {
-              Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success"
-              });
-              navigate("/allmodels"); 
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              Swal.fire("Deleted!", "Your file has been deleted.", "success");
+              navigate("/allmodels");
             }
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
       }
     });
   };
+
+  if (loading) {
+    return <div className="text-center py-10 text-lg">Loading...</div>;
+  }
+
+  if (!model || !model.thumbnail) {
+    return <div className="text-center py-10 text-red-500">No model data found.</div>;
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
@@ -52,10 +76,8 @@ const ModelDetails = () => {
 
         <div>
           <h1 className="text-4xl font-bold mb-3 text-gray-800">{model.name}</h1>
-
           <p className="text-sm text-gray-500 mb-2">
-            Category:{" "}
-            <span className="font-semibold text-primary">{model.category}</span>
+            Category: <span className="font-semibold text-primary">{model.category}</span>
           </p>
 
           <p className="text-gray-700 leading-relaxed mb-5">{model.description}</p>
@@ -87,7 +109,9 @@ const ModelDetails = () => {
         <p>
           Uploaded on:{" "}
           <span className="font-medium">
-            {new Date(model.created_at).toLocaleDateString()}
+            {model.created_at
+              ? new Date(model.created_at).toLocaleDateString()
+              : "N/A"}
           </span>
         </p>
       </div>
