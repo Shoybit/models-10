@@ -26,7 +26,7 @@ headers: {
         console.error("Error fetching model:", err);
         setLoading(false);
       });
-  }, [id]);
+  }, [id,user]);
 
   const handleDelete = () => {
     Swal.fire({

@@ -5,12 +5,12 @@ import Footer from '../Components/Footer';
 
 const MinLayout = () => {
   return (
-    <div className="flex flex-col min-h-screen"> {/* ✅ পুরো layout নেবে */}
+    <div className="flex flex-col min-h-screen"> 
       <Navbar />
-      <main className="flex-grow"> {/* ✅ এই অংশ auto height নেবে */}
-        <Outlet />
+      <main className="flex-grow"> 
+        <Outlet></Outlet>
       </main>
-      <Footer /> {/* ✅ সবসময় নিচে থাকবে */}
+      <Footer /> 
     </div>
   );
 };

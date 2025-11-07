@@ -29,7 +29,7 @@ const UpdateModals = () => {
     console.log("Update response:", data);
 
     if (data.modifiedCount > 0) {
-      alert("✅ Model updated successfully!");
+      alert("Model updated successfully!");
       navigate("/allmodels");
     }
   };

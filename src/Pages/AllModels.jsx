@@ -1,6 +1,6 @@
 import React from "react";
 import { useLoaderData } from "react-router";
-import ProductCard from "../Components/ProductCard"; // path ঠিক মতো adjust করো
+import ProductCard from "../Components/ProductCard"; 
 
 const AllModels = () => {
   const models = useLoaderData();

@@ -13,7 +13,7 @@ const AddModels = () => {
       category: e.target.category.value,
       description: e.target.description.value,
       thumbnail: e.target.thumbnail.value,
-      created_at: new Date(), // updated key
+      created_at: new Date(), 
       downloads: 0,
       created_by: user.email,
     };
@@ -22,7 +22,7 @@ const AddModels = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.accessToken}`, // token include
+        "Authorization": `Bearer ${user.accessToken}`, 
       },
       body: JSON.stringify(formData),
     })
@@ -37,7 +37,7 @@ const AddModels = () => {
             showConfirmButton: false,
             timer: 1500,
           });
-          e.target.reset(); // form clear
+          e.target.reset();
         }
       })
       .catch((err) => {
