@@ -13,7 +13,7 @@ const AddModels = () => {
       category: e.target.category.value,
       description: e.target.description.value,
       thumbnail: e.target.thumbnail.value,
-      created_at: new Date(), 
+      // created_at: new Date(), 
       downloads: 0,
       created_by: user.email,
     };

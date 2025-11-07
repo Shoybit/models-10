@@ -40,15 +40,13 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      {
-        path: "UpdateModals/:id",
+ {
+        path: "updatemodals/:id", 
         element: (
           <PrivateRoute>
             <UpdateModals />
           </PrivateRoute>
         ),
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/moduls/${params.id}`),
       },
       {
         path: "/login",

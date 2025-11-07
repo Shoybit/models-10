@@ -1,36 +1,98 @@
-import React from "react";
-import { useLoaderData, useNavigate } from "react-router";
-
+import React, { useContext, useEffect, useState } from "react";
+import {  useNavigate, useParams } from "react-router";
+import Swal from "sweetalert2";
+import { AuthContext } from "../Context/AuthContext";
 const UpdateModals = () => {
-  const model = useLoaderData();
-  const navigate = useNavigate();
+
+const { id } = useParams(); 
+const [model, setModel] = useState({});
+const [loading, setLoading] = useState(true);
+const navigate = useNavigate(); 
+const { user } = useContext(AuthContext);
+
+
+    useEffect(() => {
+      fetch(`http://localhost:3000/moduls/${id}`, {
+  headers: {
+    authorization: `Bearer ${user.accessToken}`
+  },
+  
+      })
+        .then((res) => res.json()) 
+        .then((data) => {
+          console.log("Fetched data:", data);
+          setModel(data); 
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching model:", err);
+          setLoading(false);
+        });
+    }, [id,user]);
+  
+
+  // const data = useLoaderData();
+  console.log(model);
+
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     const form = e.target;
 
     const updatedModel = {
-      name: form.name.value,
-      category: form.category.value,
-      description: form.description.value,
-      thumbnail: form.thumbnail.value,
-      created_by: form.created_by.value,
+      name: form.name.value.trim(),
+      category: form.category.value.trim(),
+      description: form.description.value.trim(),
+      thumbnail: form.thumbnail.value.trim(),
+      created_by: form.created_by.value.trim(),
     };
 
-    const res = await fetch(`http://localhost:3000/moduls/${model._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedModel),
-    });
+    const isChanged =
+      updatedModel.name !== model.name ||
+      updatedModel.category !== model.category ||
+      updatedModel.description !== model.description ||
+      updatedModel.thumbnail !== model.thumbnail ||
+      updatedModel.created_by !== model.created_by;
 
-    const data = await res.json();
-    console.log("Update response:", data);
+    if (!isChanged) {
+      return Swal.fire({
+        icon: "info",
+        title: "No Changes Detected",
+        text: "No fields were modified.",
+        confirmButtonColor: "#2563eb",
+        position: "center",
+        width: "350px",
+      });
+    }
 
-    if (data.modifiedCount > 0) {
-      alert("Model updated successfully!");
-      navigate("/allmodels");
+    try {
+      const res = await fetch(`http://localhost:3000/moduls/${model._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedModel),
+      });
+
+      const data = await res.json();
+
+      if (data.modifiedCount > 0) {
+        Swal.fire({
+          icon: "success",
+          title: "Model Updated Successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+          position: "center",
+          width: "350px",
+        });
+        navigate("/allmodels");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed!",
+        text: "Something went wrong.",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
@@ -42,9 +104,7 @@ const UpdateModals = () => {
 
       <form onSubmit={handleUpdate} className="space-y-5">
         <div>
-          <label className="block mb-2 font-medium text-gray-700">
-            Model Name
-          </label>
+          <label className="block mb-2 font-medium text-gray-700">Model Name</label>
           <input
             type="text"
             name="name"
@@ -55,9 +115,7 @@ const UpdateModals = () => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium text-gray-700">
-            Category
-          </label>
+          <label className="block mb-2 font-medium text-gray-700">Category</label>
           <select
             name="category"
             defaultValue={model?.category}
@@ -75,9 +133,7 @@ const UpdateModals = () => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium text-gray-700">
-            Description
-          </label>
+          <label className="block mb-2 font-medium text-gray-700">Description</label>
           <textarea
             name="description"
             defaultValue={model?.description}
@@ -88,9 +144,7 @@ const UpdateModals = () => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium text-gray-700">
-            Thumbnail URL
-          </label>
+          <label className="block mb-2 font-medium text-gray-700">Thumbnail URL</label>
           <input
             type="text"
             name="thumbnail"
@@ -101,9 +155,7 @@ const UpdateModals = () => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium text-gray-700">
-            Created By
-          </label>
+          <label className="block mb-2 font-medium text-gray-700">Created By</label>
           <input
             type="text"
             name="created_by"

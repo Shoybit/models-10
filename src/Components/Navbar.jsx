@@ -47,7 +47,7 @@ const Navbar = () => {
             )}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">My Website</a>
+        <a className="btn btn-ghost text-xl">Modal Website</a>
       </div>
 
       {/* Navbar Center (Desktop) */}
