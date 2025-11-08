@@ -8,6 +8,9 @@ import Login from "../Pages/Login";
 import Register from "../Pages/Register";
 import PrivateRoute from "./PrivateRoute";
 import AddModels from "../Pages/Admodels";
+import MyModels from "../Pages/MyModels";
+import MyDawnload from "../Pages/Mydownloads";
+import Mydownloads from "../Pages/Mydownloads";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +48,24 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <UpdateModals />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: 'my-models',
+        element:(
+
+          <PrivateRoute>
+           <MyModels></MyModels>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: 'my-downloads',
+        element:(
+
+          <PrivateRoute>
+           <Mydownloads></Mydownloads>
           </PrivateRoute>
         ),
       },

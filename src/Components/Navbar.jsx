@@ -40,6 +40,8 @@ const Navbar = () => {
             <li><NavLink to="/">Home</NavLink></li>
             <li><NavLink to="/allmodels">All Models</NavLink></li>
             <li><NavLink to="/addmodels">Add Models</NavLink></li>
+            <li><NavLink to="/my-models">My Models</NavLink></li>
+            <li><NavLink to="/my-downloads">My Dawnload</NavLink></li>
             {user && (
               <li>
                 <button onClick={handleLogout}>Logout</button>
@@ -56,6 +58,8 @@ const Navbar = () => {
           <li><NavLink to="/" className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : ""}>Home</NavLink></li>
           <li><NavLink to="/allmodels" className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : ""}>All Models</NavLink></li>
           <li><NavLink to="/addmodels" className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : ""}>Add Models</NavLink></li>
+
+
         </ul>
       </div>
 
@@ -76,6 +80,9 @@ const Navbar = () => {
               <li>
                 <span className="font-semibold">{user.email}</span>
               </li>
+               <li><NavLink to="/my-models" className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : ""}>My Models</NavLink></li>
+               <li><NavLink to="/my-downloads" className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : ""}>My Dawnload</NavLink></li>
+
               <li>
                 <button className="w-full text-left" onClick={handleLogout}>
                   Logout

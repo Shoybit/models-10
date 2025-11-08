@@ -1,33 +1,36 @@
-import React, {useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Context/Authcontext";
 
 const ModelDetails = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [model, setModel] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext)
-  useEffect(() => {
-    fetch(`http://localhost:3000/moduls/${id}`, {
-headers: {
-  authorization: `Bearer ${user.accessToken}`
-},
+  const { user } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (!user?.accessToken) return;
+
+    fetch(`http://localhost:3000/moduls/${id}`, {
+      headers: {
+        authorization: `Bearer ${user.accessToken}`,
+      },
     })
-      .then((res) => res.json()) 
+      .then((res) => res.json())
       .then((data) => {
         console.log("Fetched data:", data);
-        setModel(data); 
+        setModel(data);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching model:", err);
         setLoading(false);
       });
-  }, [id,user]);
+  }, [id, user]);
 
+  // ✅ Delete Handler
   const handleDelete = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -55,6 +58,25 @@ headers: {
     });
   };
 
+  // ✅ Download Handler
+  const handleDownload = () => {
+    fetch(`http://localhost:3000/downloads`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...model,
+        downloaded_by: user?.email,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Download logged:", data);
+        Swal.fire("Downloaded!", "Model has been added to downloads.", "success");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  // ✅ Loading & Error States
   if (loading) {
     return <div className="text-center py-10 text-lg">Loading...</div>;
   }
@@ -63,6 +85,7 @@ headers: {
     return <div className="text-center py-10 text-red-500">No model data found.</div>;
   }
 
+  // ✅ Main Return
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
       <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -77,7 +100,8 @@ headers: {
         <div>
           <h1 className="text-4xl font-bold mb-3 text-gray-800">{model.name}</h1>
           <p className="text-sm text-gray-500 mb-2">
-            Category: <span className="font-semibold text-primary">{model.category}</span>
+            Category:{" "}
+            <span className="font-semibold text-primary">{model.category}</span>
           </p>
 
           <p className="text-gray-700 leading-relaxed mb-5">{model.description}</p>
@@ -95,6 +119,12 @@ headers: {
             <Link to={`/UpdateModals/${model._id}`}>
               <button className="btn btn-primary px-8">Update</button>
             </Link>
+            <button
+              onClick={handleDownload}
+              className="bg-green-500 text-white px-8 py-2 rounded"
+            >
+              Download
+            </button>
             <button
               onClick={handleDelete}
               className="bg-red-500 text-white px-8 py-2 rounded"
