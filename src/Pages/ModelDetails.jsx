@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { data, Link, useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Context/Authcontext";
 
@@ -60,13 +60,29 @@ const ModelDetails = () => {
 
   // ✅ Download Handler
   const handleDownload = () => {
-    fetch(`http://localhost:3000/downloads`, {
+
+    const finalModel = {
+
+      
+name :model.name,
+category: model.category,
+description: model.description,
+thumbnail: model.thumbnail,
+created_at : new Date(),
+downloads: model.downloads,
+created_by: model.created_by,
+downloaded_by: user.email
+
+
+
+    }
+
+    fetch(`http://localhost:3000/downloads/${model._id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...model,
-        downloaded_by: user?.email,
-      }),
+      body: JSON.stringify(
+        finalModel
+      ),
     })
       .then((res) => res.json())
       .then((data) => {
