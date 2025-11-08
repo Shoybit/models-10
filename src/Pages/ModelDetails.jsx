@@ -78,7 +78,7 @@ const ModelDetails = () => {
 
   // ✅ Loading & Error States
   if (loading) {
-    return <div className="text-center py-10 text-lg">Loading...</div>;
+    return <div className="text-center py-10 text-lg"> plase Loading...</div>;
   }
 
   if (!model || !model.thumbnail) {
